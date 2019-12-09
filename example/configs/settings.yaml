@@ -10,6 +10,7 @@ trace_od:
 
 models:
   - destination_choice
+  - balance_trips
   - write_data_dictionary
   - write_tables
 

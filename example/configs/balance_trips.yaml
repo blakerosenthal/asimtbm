@@ -1,0 +1,6 @@
+# balance results to destination target totals
+dest_zone_trip_targets: totemp
+
+# balancing iteration and closure criteria
+max_iterations: 25 # default is 50
+balance_closure: 0.001 # default is 0.001

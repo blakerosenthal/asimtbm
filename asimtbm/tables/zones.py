@@ -17,11 +17,15 @@ def zones():
 
     Reads zone filenames from tables.yaml and combines
     into single table which is then registered to the pipeline.
-    Each zone file must be the same length, and unindexed.
+    Each zone file must be the same length and given a 'zone'
+    index label. If no 'zone' column is found, row numbers will
+    be used for the zone index.
     """
     table_settings = config.read_model_settings(TABLES_YAML)
     zone_tables = read_zone_tables(table_settings)
     zones_df = combine_zone_tables(zone_tables)
+
+    inject.add_table('zones', zones_df)
 
     return zones_df
 

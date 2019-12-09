@@ -12,8 +12,9 @@ from activitysim.core import (
     tracing,
 )
 
-from . import skims
-from .trips import calculate_num_trips
+from asimtbm.utils import skims
+from asimtbm.utils import trips
+from asimtbm.utils import tracing as trace
 
 logger = logging.getLogger(__name__)
 
@@ -67,8 +68,9 @@ def destination_choice(zones, data_dir, trace_od):
     segments = model_settings.get(ORIGIN_TRIPS_KEY)
     spec = read_spec_file(model_settings, segments)
 
-    od_table, trace_rows = create_od_table(od_index, spec, locals_dict, trace_od)
-    calculate_num_trips(od_table, zones, spec, locals_dict, segments, trace_rows=trace_rows)
+    od_table = create_od_table(od_index, spec, locals_dict, trace_od)
+    trips.calculate_num_trips(od_table, zones, spec, locals_dict,
+                              segments, trace_od=trace_od)
 
     # This step is not strictly necessary since the pipeline
     # closes remaining open files on exit. This just closes them
@@ -181,14 +183,12 @@ def create_od_table(od_index, spec, locals_dict, trace_od):
     -------
     od_table : pandas DataFrame
         all origin-destination pairs
-    trace_rows : pandas Series or None
-        boolean filter of rows to trace
     """
 
     logger.info('creating OD table ...')
 
     od_df = od_index.to_frame(index=False)
-    trace_rows = get_trace_rows(od_df, trace_od)
+    trace_rows = trace.trace_filter(od_df, trace_od)
     od_table, trace_results, _ = assign.assign_variables(spec, od_df,
                                                          locals_dict=locals_dict,
                                                          trace_rows=trace_rows)
@@ -202,49 +202,7 @@ def create_od_table(od_index, spec, locals_dict, trace_od):
     pipeline.replace_table('od_table', od_table)
     create_zone_summary(od_table.reset_index())
 
-    return od_table, trace_rows
-
-
-def get_trace_rows(df, trace_od, orig='orig', dest='dest'):
-    """Filter out rows from DataFrame matching the trace_od
-
-    Chooses rows matching trace_od. Specify just 'o' to trace
-    all trips originating in that zone, just 'd' to trace all
-    trips ending on that zone, or both to trace the single trip
-    starting in 'o' and ending in 'd'.
-
-    Parameters
-    ----------
-    df : pandas DataFrame with columns matching orig, dest
-    trace_od : list or dict
-        list of length == 2 or dict with keys 'o', 'd'
-
-    Returns
-    -------
-    pandas Series or None
-        non-indexed pandas filter. None if no trace_od or parsing error.
-    """
-    if not trace_od:
-        return None
-
-    if isinstance(trace_od, list) and len(trace_od) == 2:
-        o, d = trace_od
-    elif isinstance(trace_od, dict):
-        o, d = trace_od.get('o'), trace_od.get('d')
-    else:
-        logger.warn("trace_od must be either a list or dict with keys 'o' and 'd'")
-
-    if o and d:
-        return (df.loc[:, orig] == o) & (df.loc[:, dest] == d)
-
-    if o:
-        return df.loc[:, orig] == o
-
-    if d:
-        return df.loc[:, dest] == d
-
-    logger.warn("failed to parse trace_od %s" % trace_od)
-    return None
+    return od_table
 
 
 def create_zone_summary(od_table):

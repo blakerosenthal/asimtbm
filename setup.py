@@ -28,5 +28,6 @@ setup(
         'openmatrix >= 0.3.4.1',
         'pandas >= 0.24.1',
         'activitysim >= 0.9.1',
+        'ipfn >= 1.3.0'
     ]
 )

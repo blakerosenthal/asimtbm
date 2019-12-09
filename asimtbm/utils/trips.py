@@ -3,11 +3,12 @@ import pandas as pd
 import numpy as np
 
 from activitysim.core import assign, tracing, pipeline
+from asimtbm.utils import tracing as trace
 
 logger = logging.getLogger(__name__)
 
 
-def calculate_num_trips(od_df, zones, spec, locals_dict, segments, trace_rows=None):
+def calculate_num_trips(od_df, zones, spec, locals_dict, segments, trace_od=None):
     """Calculate number of trips for each origin-destination zone pair for
     each segment.
 
@@ -23,8 +24,7 @@ def calculate_num_trips(od_df, zones, spec, locals_dict, segments, trace_rows=No
     segments : dict
         dictionary of segments. key is segment name, value is
         corresponding column in zones table
-    trace_rows : pandas Series
-        filter rows to include in trace
+    trace_od : list or dict, origin-destination pair
 
     Returns
     -------
@@ -33,6 +33,7 @@ def calculate_num_trips(od_df, zones, spec, locals_dict, segments, trace_rows=No
     """
     logger.info('calculating number of trips per segment ...')
     trips_df = pd.DataFrame(index=od_df.index)
+    trace_rows = trace.trace_filter(trips_df.reset_index(), trace_od)
 
     for segment, trip_key in segments.items():
         segment_od = apply_segment_coeffs(od_df, spec, locals_dict, segment)
@@ -40,7 +41,7 @@ def calculate_num_trips(od_df, zones, spec, locals_dict, segments, trace_rows=No
 
         num_trips = logit(segment_od, trips, trace=trace_rows is not None)
 
-        trips_df['%s_trips' % segment] = num_trips
+        trips_df[segment] = num_trips
 
         if trace_rows is not None:
             logger.debug('writing segment %s trace' % segment)

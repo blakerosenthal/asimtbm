@@ -4,6 +4,8 @@ from activitysim.core import tracing
 from activitysim.core.steps.output import write_data_dictionary
 from activitysim.core.steps.output import write_tables
 
+from asimtbm.tables import zones
+
 import logging
 import warnings
 import sys

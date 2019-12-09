@@ -12,6 +12,7 @@ tracing.delete_csv_files()
 t0 = tracing.print_elapsed_time()
 
 pipeline.run(models=setting('models'))
+# pipeline.run(models=setting('models'), resume_after='destination_choice')
 
 # tables will no longer be available after pipeline is closed
 pipeline.close_pipeline()

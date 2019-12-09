@@ -18,9 +18,9 @@ orig_zone:
 # at least one segment must be given, and must have a table in tables.yaml
 # and a coefficients column in `spec_file_name`
 orig_zone_trips:
-  hbwl: hbwprl
-  hbwm: hbwprm
-  hbwh: hbwprh
+  hbwl: target_low
+  hbwm: target_med
+  hbwh: target_high
 
 # functions used in the spec file.
 # all methods are imported from the numpy package.
