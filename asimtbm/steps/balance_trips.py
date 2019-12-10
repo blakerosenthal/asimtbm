@@ -24,6 +24,18 @@ def balance_trips(trips, zones, trace_od):
     (given by the TARGETS_KEY in the balance_trips config file)
     and the trip counts calculated during the destination choice step.
 
+    The config file should contain the following parameters:
+
+    dest_zone_trip_targets:
+      total: <aggregate destination zone trip counts>
+      <segment_1>: totals for segment 1 (optional)
+      <segment_2>: totals for segment 2 (optional)
+      <segment_3>: totals for segment 3 (optional)
+
+    (These are optional)
+    max_iterations: maximum number of iteration to pass to the balancer
+    balance_closure: float precision to stop balancing totals
+
     Parameters
     ----------
     trips : DataFrameWrapper
@@ -54,19 +66,10 @@ def balance_trips(trips, zones, trace_od):
                 var_name='segment',
                 value_name='trips')
 
-    dest_targets = zones[targets]
-    dest_targets.index.name = 'dest'
-
-    segment_sums = trips_df.groupby(['orig', 'segment'])['trips'].sum()
-
-    aggregates = [
-        dest_targets,
-        segment_sums,
-    ]
-
-    dimensions = [['dest'], ['orig', 'segment']]
     max_iterations = model_settings.get('max_iterations', 50)
     closure = model_settings.get('balance_closure', 0.001)
+
+    aggregates, dimensions = calculate_aggregates(trips_df, zones.to_frame(), targets)
 
     balancer = Balancer(trips_df.reset_index(),
                         aggregates,
@@ -83,3 +86,52 @@ def balance_trips(trips, zones, trace_od):
     pipeline.replace_table('trips', balanced_trips)
 
     logger.info('finished balancing trips.')
+
+
+def calculate_aggregates(df, zones, targets):
+    """Calculates grouped totals along specified dataframe dimensions
+
+    Parameters
+    ----------
+    df : pandas DataFrame
+    zones : DataFrame
+    targets : dict
+        segment:vector pair where vector is target aggregate total
+
+    Returns
+    -------
+    aggregates : list of pandas groupby objects
+    dimensions : list of lists of column names that match aggregates
+    """
+
+    # must preserve origin totals calculated by dest_choice step
+    orig_sums = df.groupby(['orig', 'segment'])['trips'].sum()
+    aggregates = [orig_sums]
+    dimensions = [['orig', 'segment']]
+
+    if 'total' in targets:
+
+        logger.info('using %s vector for aggregate destination target totals'
+                    % targets['total'])
+
+        dest_targets = zones[targets['total']]
+        dest_targets.index.name = 'dest'
+        aggregates.append(dest_targets)
+        dimensions.append(['dest'])
+
+    else:
+
+        logger.info('using %s vectors for aggregate destination target totals'
+                    % list(targets.values()))
+
+        dest_df = zones[list(targets.values())].copy()
+        mapping = dict((v,k) for k,v in targets.items())
+        dest_df = dest_df.rename(columns=mapping)
+        dest_sums = dest_df.stack()
+        dest_sums.index.names = ['dest', 'segment']
+        dest_sums.name = 'trips'
+        aggregates.append(dest_sums)
+        dimensions.append(['dest', 'segment'])
+
+
+    return aggregates, dimensions

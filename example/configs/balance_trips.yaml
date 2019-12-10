@@ -1,5 +1,12 @@
-# balance results to destination target totals
-dest_zone_trip_targets: totemp
+# balance results to destination target totals.
+# can either specify a 'total' column to sum over all
+# segments or can break down destination totals by segment,
+# but not both.
+dest_zone_trip_targets:
+  # total: totemp
+  hbwl: target_low
+  hbwm: target_med
+  hbwh: target_high
 
 # balancing iteration and closure criteria
 max_iterations: 25 # default is 50

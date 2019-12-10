@@ -1,6 +1,9 @@
 # file name for zones table csv data input files,
 # data will be combined into a single table describing all zones.
 aggregate_zone_file_names:
+  - ma.hbwprl.csv
+  - ma.hbwprm.csv
+  - ma.hbwprh.csv
   - ma.totemp.csv
   - parking_cost.csv
   - ma.attractions.csv

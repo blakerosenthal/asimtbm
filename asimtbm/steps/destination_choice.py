@@ -25,7 +25,7 @@ ORIGIN_TRIPS_KEY = 'orig_zone_trips'
 @inject.step()
 def destination_choice(zones, data_dir, trace_od):
     """ActivitySim step that creates a raw destination choice table
-    that can be later used to calculate utilities.
+    and calculates utilities.
 
     settings.yaml must specify 'destination_choice' under 'models' for
     this step to run in the pipeline. destination_choice.yaml must also
