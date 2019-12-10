@@ -28,6 +28,9 @@ def balance_trips(trips, zones, trace_od):
 
     dest_zone_trip_targets:
       total: <aggregate destination zone trip counts>
+
+      OR
+
       <segment_1>: totals for segment 1 (optional)
       <segment_2>: totals for segment 2 (optional)
       <segment_3>: totals for segment 3 (optional)
@@ -125,13 +128,12 @@ def calculate_aggregates(df, zones, targets):
                     % list(targets.values()))
 
         dest_df = zones[list(targets.values())].copy()
-        mapping = dict((v,k) for k,v in targets.items())
+        mapping = dict((v, k) for k, v in targets.items())
         dest_df = dest_df.rename(columns=mapping)
         dest_sums = dest_df.stack()
         dest_sums.index.names = ['dest', 'segment']
         dest_sums.name = 'trips'
         aggregates.append(dest_sums)
         dimensions.append(['dest', 'segment'])
-
 
     return aggregates, dimensions

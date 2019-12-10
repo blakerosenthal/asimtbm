@@ -7,7 +7,32 @@ from activitysim.core import tracing
 
 logger = logging.getLogger(__name__)
 
-class Balancer(object):
+
+class Balancer():
+    """Wrapper for the IPFN matrix balancer
+    https://github.com/Dirguis/ipfn
+
+
+    Parameters
+    ----------
+    df : pandas DataFrame to balance
+    aggregates : list of pandas groupby objects
+        target sums
+    dimensions : list of lists
+        columns to sum over and compare to aggregates.
+        length must match aggregates.
+    weight_col : str
+        data column in df
+    convergence_rate : minimum difference between iterations
+        to qualify as a change in convergence ratio
+    closure : difference between convergence rate of two consecutive
+        iterations to stop algorithm
+
+
+    Returns
+    -------
+    Balancer object
+    """
 
     def __init__(self,
                  df,
@@ -17,31 +42,6 @@ class Balancer(object):
                  convergence_rate=1e-6,
                  max_iteration=50,
                  closure=1e-4):
-        """Wrapper for the IPFN matrix balancer
-        https://github.com/Dirguis/ipfn
-
-
-
-        Parameters
-        ----------
-        df : pandas DataFrame to balance
-        aggregates : list of pandas groupby objects
-            target sums
-        dimensions : list of lists
-            columns to sum over and compare to aggregates.
-            length must match aggregates.
-        weight_col : str
-            data column in df
-        convergence_rate : minimum difference between iterations
-            to qualify as a change in convergence ratio
-        closure : difference between convergence rate of two consecutive
-            iterations to stop algorithm
-
-
-        Returns
-        -------
-        Balancer object
-        """
 
         self.df = df
         self.aggregates = aggregates
