@@ -1,27 +1,17 @@
 import os
 import pandas as pd
 
-from activitysim.core import tracing
 from activitysim.core import inject
 from activitysim.core import pipeline
 
 from activitysim.core.config import setting
 
-
-def setup_working_dir():
-
-    example_dir = os.path.join(os.path.dirname(__file__), '../..', 'example')
-    os.chdir(example_dir)
-
-    tracing.delete_output_files('csv')
-    tracing.delete_output_files('txt')
-    tracing.delete_output_files('log')
-    tracing.delete_output_files('h5')
+from .utils import setup_working_dir
 
 
 def test_example():
 
-    setup_working_dir()
+    setup_working_dir('example')
 
     # importing asimtbm also registers injectibles
     import asimtbm

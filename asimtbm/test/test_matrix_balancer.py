@@ -1,9 +1,17 @@
-from asimtbm.utils.matrix_balancer import Balancer
 import numpy as np
 import pandas as pd
 
+from activitysim.core import inject
+from activitysim.core import pipeline
+from activitysim.core import config
 
-def test_balancer():
+from unittest.mock import Mock
+
+from asimtbm.utils.matrix_balancer import Balancer
+from .utils import setup_working_dir
+
+
+def test_balancer_class():
     """Verify that we get the same results as the test case
     in https://github.com/Dirguis/ipfn
     """
@@ -71,3 +79,38 @@ def test_balancer():
     both = pd.concat([balanced_size, size])
     diff = both.loc[balanced_size.index.symmetric_difference(size.index)]
     assert diff.empty
+
+
+def test_balancer_step():
+
+    setup_working_dir('example')
+
+    balance_settings = {
+        'input_table': 'example_input_trips.csv',
+        'orig_zone_trip_targets': {
+            'hbwl': 'hbwprl',
+            'hbwm': 'hbwprm',
+            'hbwh': 'hbwprh'
+        },
+        'dest_zone_trip_targets': {
+            'hbwl': 'target_low',
+            'hbwm': 'target_med',
+            'hbwh': 'target_high'
+        },
+        'max_iterations': 25,
+        'balance_closure': 0.001
+    }
+
+    original_read_model_settings = config.read_model_settings
+
+    def side_effect(key):
+        if key == 'balance_trips.yaml':
+            return balance_settings
+
+        return original_read_model_settings(key)
+
+    config.read_model_settings = Mock(side_effect=side_effect)
+
+    pipeline.run(['balance_trips', 'write_tables'])
+
+    pipeline.close_pipeline()
