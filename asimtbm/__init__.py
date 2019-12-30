@@ -1,7 +1,7 @@
-from .utils.initialize import config_logger
+from . import steps
+from . import tables
 
-from .steps import destination_choice
-from .steps import balance_trips
+from .utils import config_logger
 
 ##################################################
 # Global variable definitions only below this line
