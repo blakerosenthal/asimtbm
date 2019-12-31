@@ -49,44 +49,61 @@ being implemented in the ActivitySim framework means:
   * `pytest <https://docs.pytest.org/en/latest/>`__ for tests
   * `TravisCI <https://travis-ci.org>`__ for building and testing with each commit
 
-Components
-----------
-
-Software components.
-
-skims
-^^^^^
-
-.. automodule:: asimtbm.skims
-  :members:
-
-trips
-^^^^^
-
-.. automodule:: asimtbm.trips
-  :members:
-
-
-Steps
------
+Model Steps
+-----------
 
 ActivitySim pipeline steps.
 
 destination_choice
 ^^^^^^^^^^^^^^^^^^
 
-.. automodule:: asimtbm.destination_choice
+.. automodule:: asimtbm.steps.destination_choice
    :members:
 
-Tables
-------
+balance_trips
+^^^^^^^^^^^^^
+
+.. automodule:: asimtbm.steps.balance_trips
+   :members:
+
+Data Tables
+-----------
 
 ActivitySim pipeline tables.
 
 zones
 ^^^^^
 
-.. automodule:: asimtbm.zones.zones
+.. automodule:: asimtbm.tables.zones
+  :members:
+
+Software Components
+-------------------
+
+Software components.
+
+skims
+^^^^^
+
+.. automodule:: asimtbm.utils.skims
+  :members:
+
+trips
+^^^^^
+
+.. automodule:: asimtbm.utils.trips
+  :members:
+
+matrix balancer
+^^^^^^^^^^^^^^^
+
+.. automodule:: asimtbm.utils.matrix_balancer
+  :members:
+
+tracing
+^^^^^^^
+
+.. automodule:: asimtbm.utils.tracing
   :members:
 
 Contribution Guidelines

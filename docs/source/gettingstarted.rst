@@ -2,7 +2,11 @@
 Getting Started
 ===============
 
-asimtbm includes the :ref:`example` model to help get you started.
+asimtbm includes two examples for getting started.  The first example, ``example``, is an aggregate destination choice
+model with doubly-constrained balancing.  The second example, ``example_balance``, is a doubly-constrained
+matrix balancer.  In the first example, an OD matrix of trips is created using a customizable destination choice model
+and then trip destinations are balanced to input destination control totals.  In the second example, an OD matrix of 
+trips is input and then it is balanced to the origin and destination zone control totals.  
 
 Installation
 ------------
@@ -31,20 +35,10 @@ Running the Model
 
   activate asimtbmtest
 
-* Change to the example folder and then run the run_asimtbm.py program
+* Change to the ``example`` or ``example_balance`` folder and then run the ``run_asimtbm.py`` program
 
 ::
 
   python run_asimtbm.py
 
 * Check the outputs folder for results
-
-Process Overview
-----------------
-
-...
-
-Expressions
------------
-
-...
