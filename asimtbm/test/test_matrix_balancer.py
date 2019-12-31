@@ -83,33 +83,7 @@ def test_balancer_class():
 
 def test_balancer_step():
 
-    setup_working_dir('example')
-
-    balance_settings = {
-        'input_table': 'example_input_trips.csv',
-        'orig_zone_trip_targets': {
-            'hbwl': 'hbwprl',
-            'hbwm': 'hbwprm',
-            'hbwh': 'hbwprh'
-        },
-        'dest_zone_trip_targets': {
-            'hbwl': 'target_low',
-            'hbwm': 'target_med',
-            'hbwh': 'target_high'
-        },
-        'max_iterations': 25,
-        'balance_closure': 0.001
-    }
-
-    original_read_model_settings = config.read_model_settings
-
-    def side_effect(key):
-        if key == 'balance_trips.yaml':
-            return balance_settings
-
-        return original_read_model_settings(key)
-
-    config.read_model_settings = Mock(side_effect=side_effect)
+    setup_working_dir('example_balance', inherit=True)
 
     pipeline.run(['balance_trips', 'write_tables'])
 

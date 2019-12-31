@@ -106,9 +106,11 @@ def get_trips_df(model_settings):
     filename = model_settings.get('input_table', None)
 
     if not filename:
+        logger.info("using 'trips' pipeline table for balancing step")
         trips_df = pipeline.get_table('trips')
         return trips_df.reset_index()
 
+    logger.info('using %s for balancing step' % filename)
     fpath = config.data_file_path(filename, mandatory=True)
 
     return pd.read_csv(fpath, header=0, comment='#')

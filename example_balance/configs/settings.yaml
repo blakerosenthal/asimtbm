@@ -1,9 +1,3 @@
-
-#### Global Settings
-
-# specify just 'o' to trace all trips originating in that zone,
-# just 'd' to trace all trips ending on that zone, or both to trace
-# the single trip starting in 'o' and ending in 'd'
 trace_od:
   o: 3
   d: 32
@@ -17,6 +11,4 @@ output_tables:
   action: include
   prefix: final_
   tables:
-    - od_table
-    - zone_summary
     - trips
